@@ -1,0 +1,54 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+)
+
+type visitor struct {
+	ticket string
+}
+
+func main() {
+	var number int
+	fmt.Println("Enter the number of windows:")
+	fmt.Scan(&number)
+
+	windows := make([][]visitor, number)
+	time := make([]int, number)
+
+	for {
+		var command string
+		fmt.Print("Enter command (ENQUEUE/DISTRIBUTE) and time: ")
+		fmt.Scan(&command)
+
+		if command == "ENQUEUE" {
+			var visitTime int
+			fmt.Scan(&visitTime)
+
+			person := visitor{ticket: fmt.Sprintf("T%d", rand.Intn(1000))}
+			minIndex := 0
+			for i := 1; i < number; i++ {
+				if time[i] < time[minIndex] {
+					minIndex = i
+				}
+			}
+
+			windows[minIndex] = append(windows[minIndex], person)
+			time[minIndex] += visitTime
+			fmt.Println("Your ticket: ", person.ticket)
+		} else if command == "DISTRIBUTE" {
+			for i := 0; i < number; i++ {
+				fmt.Printf("Window %d (%d minutes): ", i+1, time[i])
+				for j, v := range windows[i] {
+					fmt.Print(v.ticket)
+					if j < len(windows[i])-1 {
+						fmt.Print(", ")
+					}
+				}
+				fmt.Println()
+			}
+			break
+		}
+	}
+}
